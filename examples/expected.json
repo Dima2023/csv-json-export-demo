@@ -1,0 +1,27 @@
+[
+  {
+    "id": "id001",
+    "name": "Болт",
+    "quantity": "007"
+  },
+  {
+    "id": "0002",
+    "name": "Écrou",
+    "quantity": "02"
+  },
+  {
+    "id": "0003",
+    "name": "",
+    "quantity": "0"
+  },
+  {
+    "id": "0004",
+    "name": "Nut, steel",
+    "quantity": "12"
+  },
+  {
+    "id": "0005",
+    "name": "Шайба",
+    "quantity": "003"
+  }
+]

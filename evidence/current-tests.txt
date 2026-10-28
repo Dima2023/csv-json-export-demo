@@ -1,0 +1,28 @@
+test_bad_csv (test_converter.ConversionTests.test_bad_csv) ... ok
+test_bad_json (test_converter.ConversionTests.test_bad_json) ... ok
+test_blank_dedupe_key_rejected (test_converter.ConversionTests.test_blank_dedupe_key_rejected) ... ok
+test_dedupe_key_is_after_rename_and_trim (test_converter.ConversionTests.test_dedupe_key_is_after_rename_and_trim) ... ok
+test_default_preserves_whitespace_and_duplicates (test_converter.ConversionTests.test_default_preserves_whitespace_and_duplicates) ... ok
+test_existing_output_and_source_alias_rejected (test_converter.ConversionTests.test_existing_output_and_source_alias_rejected) ... ok
+test_header_only_rejected (test_converter.ConversionTests.test_header_only_rejected) ... ok
+test_invalid_options (test_converter.ConversionTests.test_invalid_options) ... ok
+test_json_applies_same_rules (test_converter.ConversionTests.test_json_applies_same_rules) ... ok
+test_json_different_key_order (test_converter.ConversionTests.test_json_different_key_order) ... ok
+test_long_field_roundtrip (test_converter.ConversionTests.test_long_field_roundtrip) ... ok
+test_roundtrip_and_repeatability (test_converter.ConversionTests.test_roundtrip_and_repeatability) ... ok
+test_sample_unicode_strings_trim_rename_first_wins (test_converter.ConversionTests.test_sample_unicode_strings_trim_rename_first_wins) ... ok
+test_size_limits_and_bom (test_converter.ConversionTests.test_size_limits_and_bom) ... ok
+test_cleanup_failure_reports_publication_state (test_publication.PublicationTests.test_cleanup_failure_reports_publication_state) ... ok
+test_create_sync_commit_failures (test_publication.PublicationTests.test_create_sync_commit_failures) ... ok
+test_destination_created_during_commit_is_preserved (test_publication.PublicationTests.test_destination_created_during_commit_is_preserved) ... ok
+test_flush_close_short_write_failures (test_publication.PublicationTests.test_flush_close_short_write_failures) ... ok
+test_no_destination_until_closed_and_synced (test_publication.PublicationTests.test_no_destination_until_closed_and_synced) ... ok
+test_stable_parent_symlink_and_input_symlink (test_publication.PublicationTests.test_stable_parent_symlink_and_input_symlink) ... ok
+test_symlinks_existing_dangling_and_racing (test_publication.PublicationTests.test_symlinks_existing_dangling_and_racing) ... ok
+test_two_real_processes_only_one_wins (test_publication.PublicationTests.test_two_real_processes_only_one_wins) ... ok
+test_write_failure_leaves_no_partial_destination (test_publication.PublicationTests.test_write_failure_leaves_no_partial_destination) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 1.766s
+
+OK

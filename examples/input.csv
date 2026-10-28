@@ -1,0 +1,7 @@
+id,product,quantity
+ id001 , Болт , 007 
+0002,Écrou,02
+0003,  ,0
+0004,"Nut, steel",12
+0005,Шайба,003
+id001,Duplicate ignored,99
