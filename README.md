@@ -27,7 +27,7 @@ Limits: input and output at most 1 MiB, UTF-8 without BOM, nonempty data, unique
 
 Exit 0 means success; input/output/argument errors return 2 with `error:` on stderr. Validation finishes before creating the output. The result becomes visible only after the temporary file is completely written, flushed, fsynced, and successfully closed. Atomic hard-link creation refuses an occupied destination, including a competing writer, ordinary or dangling symbolic links, and the source itself. Nothing is overwritten. Round trips preserve transformed data, not the original CSV formatting. CSV values are not sanitized for spreadsheet formulas; treat untrusted CSV as text.
 
-`evidence/` records the pre-implementation run, full test run, and independent review. Initial failures due to the absent script are intentional. Tests use temporary directories and can be rerun without deleting the example outputs.
+`evidence/current-tests.txt` records the full local test run; `evidence/review-final.md` records the review. Tests use temporary directories and can be rerun without deleting the example outputs.
 
 ### Failure model and publication
 
@@ -39,7 +39,7 @@ If cleanup itself fails, exit 2 and the error identify the temporary path and pu
 
 The contract assumes trusted, stable parent directories and an input that nobody changes during reading. Stable parent-directory symlinks and an input symlink are supported. Hostile directory/temporary-file replacement, network filesystems, ambiguous syscall outcomes, SIGKILL, OS crashes, hardware failures, and power loss are outside the model. File fsync does not guarantee directory-entry durability after power loss. Abrupt termination can leave a temporary file. Absolute error freedom and power-loss durability are not claimed.
 
-Tests inject failures at filesystem-operation boundaries; they do not physically fill a disk or cut power. Two actual competing processes are also tested. Historical pre-fix reports are labeled in `evidence/`; the current full run is `evidence/after.txt`.
+Tests inject failures at filesystem-operation boundaries; they do not physically fill a disk or cut power. Two actual competing processes are also tested. The current full run is `evidence/current-tests.txt`.
 
 ## Portfolio disclosure
 

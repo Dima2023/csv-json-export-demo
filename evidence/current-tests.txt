@@ -23,6 +23,6 @@ test_two_real_processes_only_one_wins (test_publication.PublicationTests.test_tw
 test_write_failure_leaves_no_partial_destination (test_publication.PublicationTests.test_write_failure_leaves_no_partial_destination) ... ok
 
 ----------------------------------------------------------------------
-Ran 23 tests in 1.766s
+Ran 23 tests in 2.102s
 
 OK
