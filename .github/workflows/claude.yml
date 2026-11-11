@@ -1,0 +1,105 @@
+name: Исполнитель
+# Метка «claude» на задании → облачный исполнитель делает ветку и коммиты.
+# Доработка: комментарий с @claude (принимается только от владельца).
+# Ключей от почты и других внешних действий здесь нет — только код этого репозитория.
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+  actions: read
+
+# Одно задание — один запуск за раз: второй ждёт первого.
+concurrency:
+  group: claude-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+env:
+  NUMBER: ${{ github.event.issue.number }}
+
+jobs:
+  confidential:
+    # Флажок «Конфиденциально» в задании: код клиента облачному исполнителю не отдаём.
+    if: >-
+      github.event_name == 'issues' && github.event.label.name == 'claude' &&
+      contains(github.event.issue.body, '[x] Конфиденциально')
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh issue comment "$NUMBER" --body "Задание помечено как конфиденциальное: облачный исполнитель не запущен. Сделайте его локально или снимите флажок."
+          gh issue edit "$NUMBER" --remove-label claude
+
+  run:
+    if: >-
+      (
+        (github.event_name == 'issues' && github.event.label.name == 'claude') ||
+        (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') &&
+         github.event.comment.user.login == github.repository_owner)
+      ) && !contains(github.event.issue.body, '[x] Конфиденциально')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Событие issues/issue_comment берёт код и скрипты из основной ветки,
+      # поэтому ветка исполнителя не может подменить проверку статуса.
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Токен GitHub выдаётся только шагам, которым он нужен, а не всему заданию:
+      # так он не лежит в окружении команд, которые запускает исполнитель.
+      - name: Можно ли начинать
+        id: guard
+        run: python3 .github/alliance/status.py guard
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+
+      - name: Ветки до работы
+        if: steps.guard.outputs.skip != 'true'
+        run: git ls-remote --heads origin > "$RUNNER_TEMP/heads-before.txt"
+
+      - name: Исполнитель
+        id: claude
+        if: steps.guard.outputs.skip != 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          # Нужен один из двух секретов: подписка Claude (claude setup-token) или ключ API.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          label_trigger: claude
+          claude_args: >-
+            --max-turns 40
+            --allowedTools "Bash(make check),Bash(python3 -m unittest:*),Bash(git status),Bash(git diff:*)"
+            ${{ vars.ALLIANCE_CODER_MODEL && format('--model {0}', vars.ALLIANCE_CODER_MODEL) || '' }}
+
+      - name: Статус после работы
+        if: always() && steps.guard.outputs.skip == 'false'
+        run: |
+          git ls-remote --heads origin > "$RUNNER_TEMP/heads-after.txt"
+          python3 .github/alliance/status.py finish
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OUTCOME: ${{ steps.claude.outcome }}
+          HEADS_BEFORE: ${{ runner.temp }}/heads-before.txt
+          HEADS_AFTER: ${{ runner.temp }}/heads-after.txt
+
+      - name: Записать расход
+        if: always() && steps.claude.outputs.execution_file != ''
+        run: python3 .github/alliance/cost.py
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EXEC_FILE: ${{ steps.claude.outputs.execution_file }}

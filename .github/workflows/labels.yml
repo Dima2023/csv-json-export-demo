@@ -1,0 +1,25 @@
+name: Метки проекта
+# Запустите один раз после копирования шаблона.
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - run: |
+          set -e
+          label() { gh label create "$1" --color "$2" --description "$3" --force; }
+          label "claude"                  D97757 "Запустить облачного исполнителя"
+          label "тип: задание"            1D76DB "Задание исполнителю"
+          label "статус: в работе"        1D76DB "Исполнитель работает"
+          label "статус: на приёмке"      D4C5F9 "Ждёт Вашей приёмки"
+          label "статус: ждёт владельца"  FBCA04 "Исполнитель задал вопросы или упёрся"
+          label "статус: сдан"            5319E7 "Сдано клиенту"

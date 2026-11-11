@@ -1,0 +1,42 @@
+name: Задание исполнителю
+description: Задача для облачного исполнителя. Метка «claude» запускает работу.
+title: "[Задание] "
+labels: ["тип: задание"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Цель
+      description: Что должно получиться, одним-двумя предложениями.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Критерии приёмки
+      description: Каждый пункт — проверяемый факт. Из них исполнитель сначала пишет тесты.
+      placeholder: |
+        - на входе страница X, на выходе CSV с колонками a, b, c
+        - пустая страница не роняет программу
+    validations:
+      required: true
+  - type: textarea
+    id: forbidden
+    attributes:
+      label: Что нельзя трогать
+      placeholder: файлы, папки, публичные функции
+  - type: input
+    id: deadline
+    attributes:
+      label: Срок
+  - type: input
+    id: estimate
+    attributes:
+      label: Сколько минут это заняло бы у вас самих
+      description: Для отчёта — экономит ли Альянс Ваше время.
+  - type: checkboxes
+    id: confidential
+    attributes:
+      label: Конфиденциальность
+      options:
+        - label: "Конфиденциально: не передавать код облачному исполнителю"
