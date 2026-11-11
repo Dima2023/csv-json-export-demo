@@ -40,7 +40,10 @@ jobs:
           gh issue edit "$NUMBER" --remove-label claude
 
   run:
+    # В публичном репозитории создать задание и написать в нём комментарий может кто угодно.
+    # Исполнитель берёт только задания, которые создал владелец, и запускается только им.
     if: >-
+      github.event.issue.user.login == github.repository_owner &&
       (
         (github.event_name == 'issues' && github.event.label.name == 'claude') ||
         (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') &&
@@ -81,6 +84,9 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           label_trigger: claude
+          # Исполнителю передаются комментарии только владельца и служебных ботов.
+          # Чужой комментарий в задании — посторонний текст, а не поручение.
+          include_comments_by_actor: "${{ github.repository_owner }},claude[bot],github-actions[bot]"
           claude_args: >-
             --max-turns 40
             --allowedTools "Bash(make check),Bash(python3 -m unittest:*),Bash(git status),Bash(git diff:*)"
