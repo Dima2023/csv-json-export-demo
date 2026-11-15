@@ -40,7 +40,7 @@ And back: `python3 converter.py json-to-csv result.json result.csv` (see `exampl
 
 - **Nothing is guessed:** every value stays text, so `0002` never becomes `2` and `007` never becomes `7`.
 - **Explicit options only:** trimming, renaming and de-duplication happen only when you ask for them.
-- **Checks before writing:** malformed rows, duplicate columns or a file over 1 MiB stop with a clear `error:` message before the output file is created, and an existing output file is never overwritten. The output appears only after it is completely written (on a normal local disk that supports hard links; see the details below for the exact assumptions).
+- **Checks before writing:** malformed rows, duplicate columns or a file over 1 MiB stop with a clear `error:` message before the output file is created, and an existing output file is never overwritten. The output appears only after it is completely written. This assumes a normal local disk that supports hard links, folders that nobody else is changing at the same time, and an input file that is not edited while it is being read; see the details below for the full list.
 - **No dependencies:** Python 3 standard library only.
 - **23 automated tests**, including simulated write failures and two competing writers. Run them with `python3 -m unittest discover -v`.
 
