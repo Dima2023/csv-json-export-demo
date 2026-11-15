@@ -1,19 +1,55 @@
-![Project cover](cover.png)
+![CSV ⇄ JSON converter](cover.png)
 
-# CSV ↔ flat JSON — learning demo
+# CSV ⇄ JSON converter for clean data exports
 
+Turns a messy spreadsheet export into clean JSON for an API or another tool — and back to CSV. In one command it trims stray spaces, renames columns and drops duplicate IDs **without** breaking leading zeros (`0002`), quantities like `007` or non-English text.
 
+## Example
 
-An original learning demonstration for a future Python CSV/JSON service portfolio. Synthetic data, not a client case study. One CLI script using only Python's standard library. No dependencies, APIs, network, or accounts. Verified on Python 3.12; other versions have not been separately tested.
+`examples/input.csv` — six messy rows (spaces around values, a duplicate ID, Cyrillic and French text):
 
-Run from the project directory, choosing unused output filenames:
+```csv
+id,product,quantity
+ id001 , Болт , 007 
+0002,Écrou,02
+0003,  ,0
+0004,"Nut, steel",12
+0005,Шайба,003
+id001,Duplicate ignored,99
+```
 
 ```sh
 python3 converter.py csv-to-json examples/input.csv result.json --trim --rename product=name --dedupe-key id
-python3 converter.py json-to-csv result.json result.csv
-python3 -m unittest discover -v
 ```
- `examples/expected.json` and `examples/expected.csv` are ready-made results. With `--trim`, six source rows become five unique IDs. IDs (including `id001` and `0002`), Cyrillic, `Écrou`, an empty product name, and leading-zero quantities remain strings.
+
+`result.json` — five clean records, IDs and quantities kept exactly as text:
+
+```json
+[
+  { "id": "id001", "name": "Болт", "quantity": "007" },
+  { "id": "0002", "name": "Écrou", "quantity": "02" },
+  { "id": "0003", "name": "", "quantity": "0" },
+  { "id": "0004", "name": "Nut, steel", "quantity": "12" },
+  { "id": "0005", "name": "Шайба", "quantity": "003" }
+]
+```
+
+And back: `python3 converter.py json-to-csv result.json result.csv` (see `examples/expected.csv`).
+
+## Why it is safe to use on real exports
+
+- **Nothing is guessed:** every value stays text, so `0002` never becomes `2` and `007` never becomes `7`.
+- **Explicit options only:** trimming, renaming and de-duplication happen only when you ask for them.
+- **Fails loudly, never half-way:** malformed rows, duplicate columns or a file over 1 MiB stop with a clear `error:` message before anything is written; an existing output file is never overwritten.
+- **No dependencies:** Python 3 standard library only.
+- **23 automated tests**, including failure injection (disk errors, competing writers). Run them with `python3 -m unittest discover -v`.
+
+## Need something like this?
+
+The same approach fits recurring jobs such as cleaning CRM or e-commerce exports, preparing data for an API import, or merging several CSV files into one consistent format.
+
+<details>
+<summary>Detailed rules and limits (for developers)</summary>
 
 Rules, in both directions:
 
@@ -41,10 +77,7 @@ The contract assumes trusted, stable parent directories and an input that nobody
 
 Tests inject failures at filesystem-operation boundaries; they do not physically fill a disk or cut power. Two actual competing processes are also tested. The current full run is `evidence/current-tests.txt`.
 
-## Portfolio disclosure
+</details>
 
-AI-assisted learning demo with synthetic data. Not a client engagement. The converter implementation and tests are preserved from the original local learning demo. Current verification is in evidence/current-tests.txt.
-
-## Repository status
-
-Public learning portfolio project with synthetic fixtures. AI-assisted development. No private client data, live credentials or production state are included. No client outcomes or revenue claims. Tests are local checks, not proof of live service integration.
+---
+Portfolio demo with synthetic data, built with AI assistance. Test evidence: `evidence/current-tests.txt`.
